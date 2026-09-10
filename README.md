@@ -1,2 +1,2 @@
-# UpTime
-Monitoring application to help you track your website's status.
+# Argus - An Uptime Monitoring Service
+Lightweight monitoring application to help you track your website's status, with visualizations and notification-based alerts.
