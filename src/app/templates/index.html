@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+  <a href="/about">About</a>
+  <h1>Argus</h1>
+  <button id="open-submit">+</button>
+  <dialog id="submit-dialog">
+    <form method="post" action="/submit">
+      <input type="text" name="name" placeholder="Your Username" required />
+      <input type="text" name="intervals" placeholder="Check interval (e.g., 30s)" required />
+      <input type="text" name="discord_webhook" placeholder="Discord Webhook URL (optional)" />
+      <input type="text" name="slack_webhook" placeholder="Slack Webhook URL (optional)" required />
+      <button type="submit">Add site</button>
+      <button type="button" id="cancel">Cancel</button>
+    </form>
+  </dialog>
+  {% for row in status_table %}
+    <table>
+      <tr>
+        <th>Owner</th>
+        <th>Status</th>
+        <th>24h Uptime</th>
+        <th>p95 Latency (ms)</th>
+        <th>24h Sparkline</th>
+      </tr>
+      <tr>
+        <td>{{ row.owner }}</td>
+        <td>{{ row.status }}</td>
+        <td>{{ row.uptime_24h }}</td>
+        <td>{{ row.p95_ms }}</td>
+      </tr>
+    </table>
+
+    <script>
+      const dlg = document.getElementById("submit-dialog");
+      document.getElementById("open-submit").addEventListener("click", () => dlg.showModal());
+      document.getElementById("cancel").addEventListener("click", () => dlg.close());
+    </script>
+  {% endfor %}
+{% endblock content%}
