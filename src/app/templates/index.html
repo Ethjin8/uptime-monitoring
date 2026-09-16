@@ -1,20 +1,68 @@
 {% extends "base.html" %}
+{% block title %}<title>Argus - Uptime Monitoring</title>{% endblock %}
 {% block content %}
-  <a href="/about">About</a>
-  <h1>Argus</h1>
-  <button id="open-submit">+</button>
+  <header>
+    <a href="{{ url_for('about') }}">About</a>
+    <h1>Argus</h1>
+    <p>Uptime monitoring made easy.</p>
+    <button id="open-submit">+</button>
+  </header>
+
+  <section id="summary">
+    <div>
+      <span>Sites Monitored</span>
+      <strong>{{ status_table|length }}</strong>
+    </div>
+    <div>
+      <span>Active Incidents</span>
+      <strong>{{ status_table|selectattr('status', 'equalto', 'DOWN')|list|length }}</strong>
+    </div>
+    <div>
+      <span>Average Latency (p95)</span>
+      <strong>-- ms</strong>
+    </div>
+  </section>
+
   <dialog id="submit-dialog">
     <form method="post" action="/submit">
-      <input type="text" name="name" placeholder="Your Username" required />
-      <input type="text" name="intervals" placeholder="Check interval (e.g., 30s)" required />
-      <input type="text" name="discord_webhook" placeholder="Discord Webhook URL (optional)" />
-      <input type="text" name="slack_webhook" placeholder="Slack Webhook URL (optional)" required />
+      <h2>Monitor a site</h2>
+
+      <label for="url">URL to monitor</label>
+      <input type="url" id="url" name="url" placeholder="https://example.com" required />
+
+      <label for="owner_label">Display name</label>
+      <input type="text" id="owner_label" name="owner_label" placeholder="Shown on the board" required />
+
+      <label for="interval_seconds">Check interval</label>
+      <select id="interval_seconds" name="interval_seconds">
+        <option value="30" selected>Every 30 seconds</option>
+        <option value="60">Every 60 seconds</option>
+        <option value="300">Every 5 minutes</option>
+      </select>
+
+      <label for="discord_webhook">Discord webhook (optional)</label>
+      <input type="url" id="discord_webhook" name="discord_webhook" placeholder="https://discord.com/api/webhooks/..." />
+
+      <label for="slack_webhook">Slack webhook (optional)</label>
+      <input type="url" id="slack_webhook" name="slack_webhook`" placeholder="https://hooks.slack.com/services/..." />
+
       <button type="submit">Add site</button>
       <button type="button" id="cancel">Cancel</button>
     </form>
   </dialog>
-  {% for row in status_table %}
-    <table>
+
+  <form id="search" method="get" action="{{ url_for('index') }}">
+    <input type="search" name="q" placeholder="Search by..." />
+    <select name="search_type">
+      <option value="owner" selected>Owner</option>
+      <option value="url">URL</option>
+      <option value="status_code">Status Code</option>
+    </select>
+    <button type="submit">Search</button>
+  </form>
+
+  <table>
+    <thead>
       <tr>
         <th>Owner</th>
         <th>Status</th>
@@ -22,18 +70,30 @@
         <th>p95 Latency (ms)</th>
         <th>24h Sparkline</th>
       </tr>
-      <tr>
-        <td>{{ row.owner }}</td>
-        <td>{{ row.status }}</td>
-        <td>{{ row.uptime_24h }}</td>
-        <td>{{ row.p95_ms }}</td>
-      </tr>
-    </table>
+    </thead>
+    <tbody>
+      {% for row in status_table %}
+        <tr>
+          <td><a href="{{ url_for('site', site_id=row.id) }}">{{ row.owner }}</a></td>
+          <td>{{ row.status }}</td>
+          <td>{{ row.uptime_24h }}%</td>
+          <td>{{ row.p95_ms }}</td>
+          <td><!-- sparkline SVG goes here --></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-    <script>
-      const dlg = document.getElementById("submit-dialog");
-      document.getElementById("open-submit").addEventListener("click", () => dlg.showModal());
-      document.getElementById("cancel").addEventListener("click", () => dlg.close());
-    </script>
-  {% endfor %}
-{% endblock content%}
+  <footer>
+    <p>Uptime is successful probes divided by total probes, where success means a 2xx response.</p>
+    <p>Probed from a single location. Sites on different check intervals produce different sample counts, so their percentages are not strictly comparable.</p>
+  </footer>
+{% endblock content %}
+
+{% block scripts %}
+  <script>
+    const dlg = document.getElementById("submit-dialog");
+    document.getElementById("open-submit").addEventListener("click", () => dlg.showModal());
+    document.getElementById("cancel").addEventListener("click", () => dlg.close());
+  </script>
+{% endblock scripts %}

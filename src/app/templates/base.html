@@ -3,13 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {% if owner %}
-    <title>Argus - {{ owner }}'s Site</title>
-  {% else %}
-    <title>Argus - Uptime Monitoring</title>
-  {% endif %}
+  {% block title %}<title>Argus - Uptime Monitoring</title>{% endblock %}
 </head>
 <body>
   {% block content %}{% endblock %}
+  {% block scripts %}{% endblock %}
 </body>
 </html>

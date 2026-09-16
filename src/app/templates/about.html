@@ -1,6 +1,22 @@
 {% extends "base.html" %}
+{% block title %}<title>About - Argus</title>{% endblock %}
 {% block content %}
-  <a href="/home">Home</a>
-  <h1>About Page</h1>
-  <p>This is the about page for this uptime monitoring application.</p>
+  <header>
+    <a href="{{ url_for('index') }}">Board</a>
+    <h1>About Argus</h1>
+  </header>
+
+  <p>Argus is a public uptime monitoring service. Submit a publicly reachable URL and it gets probed on a fixed interval, with the results published on the board.</p>
+
+  <section>
+    <h2>How to use it</h2>
+  </section>
+
+  <section>
+    <h2>What the numbers mean</h2>
+  </section>
+
+  <section>
+    <h2>Credits</h2>
+  </section>
 {% endblock content %}

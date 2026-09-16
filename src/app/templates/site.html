@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}<title>Argus - {{ site.owner }}'s Site</title>{% endblock %}
+{% block content %}
+  <header>
+    <a href="{{ url_for('index') }}">Board</a>
+    <h1>{{ site.owner }}</h1>
+  </header>
+
+  <section id="uptime-bars">
+    <!-- one bar per period: green all probes passed, yellow some failed, red all failed -->
+  </section>
+
+  <section id="pills">
+    <span>Status: {{ site.status }}</span>
+    <span>How long in state: --</span>
+    <span>Last checked: --</span>
+  </section>
+
+  <section id="uptime-status">
+    <h2>Uptime Status</h2>
+    <nav id="window-select">
+      <a href="?window=24h">24h</a>
+      <a href="?window=7d">7 days</a>
+      <a href="?window=30d">30 days</a>
+    </nav>
+
+    <canvas id="latency-chart"></canvas>
+
+    <table id="percentiles">
+      <tbody>
+        <tr><th>p50</th><td>--</td></tr>
+        <tr><th>p95</th><td>{{ site.p95_ms }}</td></tr>
+        <tr><th>p99</th><td>--</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="incident-log">
+    <h2>Incident Log</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Started</th>
+          <th>Ended</th>
+          <th>Duration</th>
+          <th>Cause</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- one row per incident -->
+      </tbody>
+    </table>
+  </section>
+
+  <section id="result-breakdown">
+    <h2>Result Breakdown</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Result</th>
+          <th>Count</th>
+          <th>% of probes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- one row per distinct outcome, sorted by count -->
+      </tbody>
+    </table>
+  </section>
+{% endblock content %}
