@@ -23,12 +23,12 @@ First time only — this creates the container and the `argus-data` volume where
 ```bash
 docker run --name argus-database -d \
   -e POSTGRES_PASSWORD=dev \
-  -p 5432:5432 \
+  -p 5435:5432 \
   -v argus-data:/var/lib/postgresql \
   postgres:18
 ```
 
-Every time after that, just switch it back on:
+Note that port 5435 was chosen on my laptop to avoid conflicts with previous containers — change it as necessary. Every time after that, just switch it back on:
 
 ```bash
 docker start argus-database
