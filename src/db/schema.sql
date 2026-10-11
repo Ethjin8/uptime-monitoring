@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS probe_results (
   probed_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
   status_code  INT,        
   latency_ms   INT,
-  error        TEXT         CHECK (error IN ('TIMEOUT', 'CONN_REFUSED', 'DNS', 'TLS_ERROR')),
+  error        TEXT         CHECK (error IN ('TIMEOUT', 'CONN_REFUSED', 'DNS', 'TLS_ERROR', 'UNKNOWN_ERROR')),
   CHECK (status_code IS NOT NULL OR error IS NOT NULL)  
 );
 
