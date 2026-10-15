@@ -11,4 +11,14 @@ def list_targets():
 
   return rows
 
-print(list_targets())
+def save_result(target_id, probe_info):
+  status_code = probe_info["status_code"]
+  latency_ms = probe_info["latency_ms"]
+  error = probe_info["error"]
+
+  with psycopg.connect(DB_URL) as conn:
+    conn.execute(
+      # use a parameterized SQL query so the values are treated as inserted data, rather than direct code (prevents SQL injection)
+      "INSERT INTO probe_results (target_id, status_code, latency_ms, error) VALUES (%s, %s, %s, %s)",    
+      (target_id, status_code, latency_ms, error)
+    )
