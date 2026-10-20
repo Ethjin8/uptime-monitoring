@@ -29,8 +29,3 @@ def check_target(url):
     
   except Exception as e:    # handle leftover errors
     return {"status_code": None, "latency_ms": None, "error": "UNKNOWN_ERROR"}
-
-print(check_target("https://galaxi-xrd.com/"))
-print(check_target("https://localhost:9999"))
-print(check_target("https://expired.badssl.com/"))
-print(check_target("https://weifhurhge.com"))
