@@ -1,6 +1,8 @@
 import time   # library for built-in clock tools (e.g., stopwatch)
 import requests   # library for making HTTP requests
 
+from db.queries import list_targets, save_result    # functions to query database directly
+
 
 def check_target(url):
   start = time.monotonic()    # start the stopwatch to measure elapsed time
@@ -28,3 +30,12 @@ def check_target(url):
     
   except Exception as e:    # handle leftover errors
     return {"status_code": None, "latency_ms": None, "error": "UNKNOWN_ERROR"}
+
+
+while True:
+  for row in list_targets():
+    probe_result = check_target(row["url"])
+    save_result(row["id"], probe_result)
+
+  time.sleep(30)
+  
