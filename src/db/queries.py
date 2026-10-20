@@ -22,3 +22,4 @@ def save_result(target_id, probe_info):
       "INSERT INTO probe_results (target_id, status_code, latency_ms, error) VALUES (%s, %s, %s, %s)",    
       (target_id, status_code, latency_ms, error)
     )
+    
