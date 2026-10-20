@@ -1,4 +1,3 @@
-from tabnanny import check
 import time   # library for built-in clock tools (e.g., stopwatch)
 import requests   # library for making HTTP requests
 
