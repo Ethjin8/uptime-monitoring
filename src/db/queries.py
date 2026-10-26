@@ -34,9 +34,31 @@ def fetch_probe_results():
 
   with psycopg.connect(DB_URL, row_factory=dict_row) as conn:
     return conn.execute("""
-        SELECT DISTINCT ON (probe_results.target_id) targets.id, targets.url, probe_results.status_code, probe_results.latency_ms, probe_results.error
+        SELECT DISTINCT ON (probe_results.target_id) targets.owner_label, targets.id, targets.url, probe_results.status_code, probe_results.latency_ms, probe_results.error
         FROM probe_results
         JOIN targets ON targets.id = probe_results.target_id
         ORDER BY probe_results.target_id DESC, probe_results.probed_at DESC
     """).fetchall()
-    
+
+
+def fetch_uptime_24h():
+  """
+  Query to gather 24-hour uptime percentage
+  """
+  with psycopg.connect(DB_URL, row_factory=dict_row) as conn:
+    rows = conn.execute("""
+      SELECT target_id,
+        COUNT(*) AS total_probes,
+        COUNT(*) FILTER (WHERE status_code BETWEEN 200 and 299) AS successful_probes
+      FROM probe_results
+      WHERE probed_at > now() - interval '24 hours'
+      GROUP BY target_id
+    """).fetchall()
+
+  uptime_24h = {}
+  for row in rows:
+    uptime_percentage = row["successful_probes"] / row["total_probes"] * 100
+    uptime_24h[row["target_id"]] = round(uptime_percentage, 1)
+
+  return uptime_24h
+
