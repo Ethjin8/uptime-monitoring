@@ -1,5 +1,5 @@
-from flask import Flask, render_template, abort
-from db.queries import fetch_probe_results, fetch_uptime_24h
+from flask import Flask, request, redirect, url_for, render_template, abort
+from db.queries import fetch_probe_results, fetch_uptime_24h, add_target
 app = Flask(__name__)
 
 
@@ -11,7 +11,7 @@ def index():
 
   for row in status_table:
     row["uptime_24h"] = uptime_24h.get(row["id"])
-    
+
   return render_template('index.html', status_table=status_table)
 
 @app.route("/about")
@@ -26,3 +26,13 @@ def site(site_id):
   if row is None:
     abort(404)
   return render_template('site.html', site=row)
+
+@app.route("/submit", methods=["POST"])
+def submit():
+  target_url = request.form["url"]
+  if not target_url.startswith(("http://", "https://")):
+    abort(400)
+
+  add_target(request.form)
+  
+  return redirect(url_for("index"))

@@ -1,5 +1,7 @@
+import secrets    # generates random, unguessable string to serve as token for deletion
 import psycopg    # library connecting Python to Postgres
 from psycopg.rows import dict_row   # labels each row value and returns it as a dictionary
+from werkzeug.datastructures import ImmutableMultiDict    # engine for Flask that does low-level web work, imported to add typing for add_target
 
 
 # default user -> postgres; default database name -> postgres
@@ -62,3 +64,19 @@ def fetch_uptime_24h():
 
   return uptime_24h
 
+
+def add_target(input: ImmutableMultiDict):    # Flask stores request.form data in an ImmutableMultiDict 
+  target_url = input["url"]
+  owner_label = input["owner_label"]
+  probe_interval = int(input["interval_seconds"])
+  discord_webhook = input["discord_webhook"] if input["discord_webhook"] else None
+  slack_webhook = input["slack_webhook"] if input["slack_webhook"] else None
+  removal_token = secrets.token_urlsafe(16)
+
+  with psycopg.connect(DB_URL, row_factory=dict_row) as conn:
+    conn.execute(
+      """
+      INSERT INTO targets (url, owner_label, interval_seconds, discord_webhook, slack_webhook, removal_token)
+      VALUES (%s, %s, %s, %s, %s, %s)
+      """,
+      (target_url, owner_label, probe_interval, discord_webhook, slack_webhook, removal_token))
