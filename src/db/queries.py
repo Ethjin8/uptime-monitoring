@@ -1,6 +1,7 @@
+import secrets    # generates random, unguessable string to serve as token for deletion
 import psycopg    # library connecting Python to Postgres
 from psycopg.rows import dict_row   # labels each row value and returns it as a dictionary
-import secrets    # generates random, unguessable string to serve as token for deletion
+from werkzeug.datastructures import ImmutableMultiDict    # engine for Flask that does low-level web work, used to add typing for add_target
 
 
 # default user -> postgres; default database name -> postgres
@@ -64,7 +65,7 @@ def fetch_uptime_24h():
   return uptime_24h
 
 
-def add_target(input):
+def add_target(input: ImmutableMultiDict):    # Flask stores request.form data in an ImmutableMultiDict 
   target_url = input["url"]
   owner_label = input["owner_label"]
   probe_interval = int(input["interval_seconds"])
