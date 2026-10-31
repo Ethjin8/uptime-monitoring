@@ -1,7 +1,7 @@
 import secrets    # generates random, unguessable string to serve as token for deletion
 import psycopg    # library connecting Python to Postgres
 from psycopg.rows import dict_row   # labels each row value and returns it as a dictionary
-from werkzeug.datastructures import ImmutableMultiDict    # engine for Flask that does low-level web work, used to add typing for add_target
+from werkzeug.datastructures import ImmutableMultiDict    # engine for Flask that does low-level web work, imported to add typing for add_target
 
 
 # default user -> postgres; default database name -> postgres
