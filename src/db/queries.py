@@ -51,7 +51,7 @@ def fetch_uptime_24h():
     rows = conn.execute("""
       SELECT target_id,
         COUNT(*) AS total_probes,
-        COUNT(*) FILTER (WHERE status_code BETWEEN 200 and 299) AS successful_probes
+        COUNT(*) FILTER (WHERE status_code = 200) AS successful_probes
       FROM probe_results
       WHERE probed_at > now() - interval '24 hours'
       GROUP BY target_id
