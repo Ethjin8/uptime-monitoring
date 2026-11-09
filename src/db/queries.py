@@ -80,3 +80,20 @@ def add_target(input: ImmutableMultiDict):    # Flask stores request.form data i
       VALUES (%s, %s, %s, %s, %s, %s)
       """,
       (target_url, owner_label, probe_interval, discord_webhook, slack_webhook, removal_token))
+
+
+def targets_due():
+  with psycopg.connect(DB_URL, row_factory=dict_row) as conn:
+    return conn.execute("""
+      SELECT id, url FROM targets
+      WHERE active AND next_due_at <= now()
+    """).fetchall()
+
+
+def update_due_time(target_id):
+  with psycopg.connect(DB_URL) as conn:
+    conn.execute(
+      "UPDATE targets SET next_due_at = now() + interval_seconds * interval '1 second' WHERE id = %s", 
+      (target_id,)
+    )
+    

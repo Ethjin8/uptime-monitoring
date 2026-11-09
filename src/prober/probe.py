@@ -1,7 +1,7 @@
 import time   # library for built-in clock tools (e.g., stopwatch)
 import requests   # library for making HTTP requests
 
-from db.queries import list_targets, save_result    # functions to query database directly
+from db.queries import list_targets, save_result, targets_due, update_due_time    # functions to query database directly
 
 
 def check_target(url):
@@ -33,9 +33,9 @@ def check_target(url):
 
 
 while True:
-  for row in list_targets():
+  for row in targets_due():
     probe_result = check_target(row["url"])
     save_result(row["id"], probe_result)
+    update_due_time(row["id"])
 
-  time.sleep(30)
-  
+  time.sleep(1)
